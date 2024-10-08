@@ -17,4 +17,17 @@ public class DocumentPosition extends MetaEntity {
     private Product.ProductPack pack;
     private Double price;
     private Double quantity;
+    private Stock stock;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @EqualsAndHashCode
+    public class Stock{
+        private Double cost;
+        private Double quantity;
+        private Double reserve;
+        private Double intransit;
+        private Double available;
+    }
 }
