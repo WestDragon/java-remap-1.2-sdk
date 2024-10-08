@@ -4,7 +4,9 @@ import ru.moysklad.remap_1_2.ApiClient;
 import ru.moysklad.remap_1_2.clients.EntityClientBase;
 import ru.moysklad.remap_1_2.clients.endpoints.*;
 import ru.moysklad.remap_1_2.entities.MetaEntity;
+import ru.moysklad.remap_1_2.entities.documents.DocumentPosition;
 import ru.moysklad.remap_1_2.entities.documents.RetailDemand;
+import ru.moysklad.remap_1_2.entities.documents.positions.RetailSalesDocumentPosition;
 import ru.moysklad.remap_1_2.responses.metadata.MetadataAttributeSharedStatesResponse;
 
 public final class RetailDemandClient
@@ -18,6 +20,7 @@ public final class RetailDemandClient
         GetByIdEndpoint<RetailDemand>,
         PutByIdEndpoint<RetailDemand>,
         MassCreateUpdateDeleteEndpoint<RetailDemand>,
+        DocumentPositionsEndpoint<RetailSalesDocumentPosition>,
         ExportEndpoint,
         PublicationEndpoint,
         HasStatesEndpoint,
@@ -35,5 +38,10 @@ public final class RetailDemandClient
     @Override
     public Class<? extends MetaEntity> metaEntityClass() {
         return MetadataAttributeSharedStatesResponse.class;
+    }
+
+    @Override
+    public Class<? extends DocumentPosition> documentPositionClass() {
+        return RetailSalesDocumentPosition.class;
     }
 }
