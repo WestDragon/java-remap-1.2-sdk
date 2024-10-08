@@ -15,6 +15,6 @@ import ru.moysklad.remap_1_2.entities.products.markers.ProductMarker;
 public class DocumentPosition extends MetaEntity {
     private ProductMarker assortment;
     private Product.ProductPack pack;
-    private Long price;
+    private Double price;
     private Double quantity;
 }
