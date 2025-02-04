@@ -12,13 +12,14 @@ import ru.moysklad.remap_1_2.entities.products.markers.HasFiles;
 import ru.moysklad.remap_1_2.responses.ListEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PaymentIn extends DocumentEntity implements FinanceInDocumentMarker, IEntityWithAttributes, HasFiles {
+public class PaymentIn extends DocumentEntity implements FinanceInDocumentMarker, IEntityWithAttributes<DocumentAttribute>, HasFiles {
     private Agent agent;
     private LocalDateTime created;
     private String externalCode;
@@ -34,7 +35,7 @@ public class PaymentIn extends DocumentEntity implements FinanceInDocumentMarker
     private String description;
     private AgentAccount organizationAccount;
     private AgentAccount agentAccount;
-    private List<Attribute> attributes;
+    private List<DocumentAttribute> attributes;
     private LocalDateTime incomingDate;
     private String incomingNumber;
     private FactureOut factureOut;
@@ -44,4 +45,12 @@ public class PaymentIn extends DocumentEntity implements FinanceInDocumentMarker
     public PaymentIn(String id) {
         super(id);
     }
+
+    public void setLinkedOperations(List<LinkedOperation> operations) {
+        if (operations != null) {
+            this.operations = new ArrayList<>();
+            this.operations.addAll(operations);
+        }
+    }
+
 }

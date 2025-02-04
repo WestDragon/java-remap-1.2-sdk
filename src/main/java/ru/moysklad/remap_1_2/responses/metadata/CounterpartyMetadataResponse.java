@@ -1,10 +1,11 @@
 package ru.moysklad.remap_1_2.responses.metadata;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.moysklad.remap_1_2.entities.Attribute;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public final class CounterpartyMetadataResponse extends MetadataAttributeSharedStatesResponse {
-    @SerializedName("tags")
+public final class CounterpartyMetadataResponse extends MetadataAttributeSharedStatesResponse<Attribute> {
+    @JsonProperty("tags")
     private List<String> groups;
 }
