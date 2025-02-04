@@ -1,5 +1,6 @@
 package ru.moysklad.remap_1_2.entities.documents;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import ru.moysklad.remap_1_2.clients.EntityClientBase;
 import ru.moysklad.remap_1_2.entities.*;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static ru.moysklad.remap_1_2.utils.params.FilterParam.filterEq;
 import static org.junit.Assert.*;
@@ -41,7 +43,7 @@ public class PaymentInTest extends EntityGetUpdateDeleteTest implements FilesTes
 
     @Test
     public void metadataTest() throws IOException, ApiClientException {
-        MetadataAttributeSharedStatesResponse response = api.entity().paymentin().metadata().get();
+        MetadataAttributeSharedStatesResponse<DocumentAttribute> response = api.entity().paymentin().metadata().get();
 
         assertFalse(response.getCreateShared());
     }
@@ -54,46 +56,83 @@ public class PaymentInTest extends EntityGetUpdateDeleteTest implements FilesTes
 
     @Test
     public void createAttributeTest() throws IOException, ApiClientException {
-        Attribute attribute = new Attribute();
-        attribute.setType(Attribute.Type.textValue);
+        DocumentAttribute attribute = new DocumentAttribute();
+        attribute.setType(DocumentAttribute.Type.textValue);
         String name = "field" + randomString(3) + "_" + new Date().getTime();
         attribute.setName(name);
         attribute.setRequired(false);
+        attribute.setShow(true);
         attribute.setDescription("description");
-        Attribute created = api.entity().paymentin().createMetadataAttribute(attribute);
+        DocumentAttribute created = api.entity().paymentin().createMetadataAttribute(attribute);
         assertNotNull(created);
         assertEquals(name, created.getName());
-        assertEquals(Attribute.Type.textValue, created.getType());
+        assertEquals(DocumentAttribute.Type.textValue, created.getType());
         assertFalse(created.getRequired());
+        assertTrue(created.getShow());
         assertEquals("description", created.getDescription());
     }
 
     @Test
     public void updateAttributeTest() throws IOException, ApiClientException {
-        Attribute attribute = new Attribute();
+        DocumentAttribute attribute = new DocumentAttribute();
         attribute.setEntityType(Meta.Type.PRODUCT);
         attribute.setName("field" + randomString(3) + "_" + new Date().getTime());
         attribute.setRequired(true);
-        Attribute created = api.entity().paymentin().createMetadataAttribute(attribute);
+        attribute.setShow(true);
+        DocumentAttribute created = api.entity().paymentin().createMetadataAttribute(attribute);
 
         String name = "field" + randomString(3) + "_" + new Date().getTime();
         created.setName(name);
         created.setRequired(false);
-        Attribute updated = api.entity().paymentin().updateMetadataAttribute(created);
+        created.setShow(false);
+        DocumentAttribute updated = api.entity().paymentin().updateMetadataAttribute(created);
         assertNotNull(created);
         assertEquals(name, updated.getName());
         assertNull(updated.getType());
         assertEquals(Meta.Type.PRODUCT, updated.getEntityType());
         assertFalse(updated.getRequired());
+        assertFalse(updated.getShow());
+    }
+
+    @Test
+    public void linkDemandToPaymentInWithLinkedSumTest() throws ApiClientException, IOException {
+        Demand demand = new Demand();
+        demand.setName("demand_" + randomString(3) + "_" + new Date().getTime());
+        demand.setDescription(randomString());
+        demand.setVatEnabled(true);
+        demand.setVatIncluded(true);
+        demand.setMoment(LocalDateTime.now());
+        demand.setOrganization(simpleEntityManager.getOwnOrganization());
+        demand.setAgent(simpleEntityManager.createSimpleCounterparty());
+        demand.setStore(simpleEntityManager.getMainStore());
+        PaymentIn paymentIn = new PaymentIn();
+        paymentIn.setName("paymentin_" + randomString(3) + "_" + new Date().getTime());
+        paymentIn.setMoment(LocalDateTime.now());
+        paymentIn.setSum(randomLong(10, 10000));
+        paymentIn.setOrganization(simpleEntityManager.getOwnOrganization());
+        paymentIn.setAgent(simpleEntityManager.createSimpleCounterparty());
+
+        Demand createdDemand = api.entity().demand().create(demand);
+        PaymentIn createdPaymentIn = api.entity().paymentin().create(paymentIn);
+        LinkedOperation operation = new LinkedOperation(createdDemand, paymentIn.getSum().doubleValue());
+        createdPaymentIn.setLinkedOperations(ImmutableList.of(operation));
+        List<PaymentIn> updatedPaymentIns = api.entity().paymentin().createOrUpdate(ImmutableList.of(createdPaymentIn));
+
+        assertNotNull(updatedPaymentIns);
+        assertEquals(1, updatedPaymentIns.size());
+        assertEquals(paymentIn.getName(), updatedPaymentIns.get(0).getName());
+        assertEquals(1, updatedPaymentIns.get(0).getOperations().size());
+        assertEquals(operation.getMeta().getHref(), updatedPaymentIns.get(0).getOperations().get(0).getMeta().getHref());
     }
 
     @Test
     public void deleteAttributeTest() throws IOException, ApiClientException{
-        Attribute attribute = new Attribute();
+        DocumentAttribute attribute = new DocumentAttribute();
         attribute.setEntityType(Meta.Type.PRODUCT);
         attribute.setName("field" + randomString(3) + "_" + new Date().getTime());
         attribute.setRequired(true);
-        Attribute created = api.entity().paymentin().createMetadataAttribute(attribute);
+        attribute.setShow(true);
+        DocumentAttribute created = api.entity().paymentin().createMetadataAttribute(attribute);
 
         api.entity().paymentin().deleteMetadataAttribute(created);
 

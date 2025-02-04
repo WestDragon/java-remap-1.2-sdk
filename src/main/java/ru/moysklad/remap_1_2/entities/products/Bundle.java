@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Bundle extends AbstractProduct implements IEntityWithAttributes, HasImages {
+public class Bundle extends AbstractProduct implements IEntityWithAttributes<Attribute>, HasImages {
     /**
      * Ссылка на Владельца (Сотрудника) в формате Метаданных
      */
@@ -147,7 +147,11 @@ public class Bundle extends AbstractProduct implements IEntityWithAttributes, Ha
         FOOD_SUPPLEMENT,
         SANITIZER,
         MEDICAL_DEVICES,
-        SOFT_DRINKS
+        SOFT_DRINKS,
+        VETPHARMA,
+        SEAFOOD,
+        BICYCLE,
+        NABEER
     }
 
     /**
