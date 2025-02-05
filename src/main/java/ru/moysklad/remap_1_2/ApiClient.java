@@ -182,13 +182,13 @@ public final class ApiClient {
         module.addDeserializer(DocumentEntity.class, new DocumentEntityDeserializer());
         module.addDeserializer(Agent.class, new AgentDeserializer());
         module.addSerializer(Attribute.class, new AttributeSerializer());
-        module.addDeserializer(Attribute.class, new AttributeDeserializer());
         module.addSerializer(DocumentAttribute.class, new DocumentAttributeSerializer());
-        module.addDeserializer(DocumentAttribute.class, new DocumentAttributeDeserializer());
         module.addSerializer(Currency.MultiplicityType.class, new Currency.MultiplicityType.Serializer());
         module.addDeserializer(Currency.MultiplicityType.class, new Currency.MultiplicityType.Deserializer());
         module.addDeserializer(Discount.class, new DiscountDeserializer());
         module.addDeserializer(ListEntity.class, new ListEntityDeserializer());
+        module.addSerializer(LocalDate.class, new LocalDateSerializer());
+        module.addDeserializer(LocalDate.class, new LocalDateDeserializer());
         module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
         module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
         module.addDeserializer(CompanySettingsMetadata.CustomEntityMetadata.class, new CustomEntityMetadataDeserializer());
@@ -209,6 +209,20 @@ public final class ApiClient {
         module.addSerializer(RetailStore.PriorityOfdSend.class, new EnumSwitchCaseSerializer<>(RetailStore.PriorityOfdSend.class));
         module.addDeserializer(RetailStore.PriorityOfdSend.class, new EnumSwitchCaseDeserializer<>(RetailStore.PriorityOfdSend.class));
         module.addSerializer(Optional.class, new OptionalEmptyAsNullSerializer());
+
+        module.setDeserializerModifier(new BeanDeserializerModifier()
+        {
+            @Override
+            public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config,
+                                                          BeanDescription beanDesc, JsonDeserializer<?> deserializer)
+            {
+                if (beanDesc.getBeanClass() == DocumentAttribute.class)
+                    return new DocumentAttributeStdDeserializer(deserializer);
+                if (beanDesc.getBeanClass() == Attribute.class)
+                    return new AttributeStdDeserializer(deserializer);
+                return deserializer;
+            }
+        });
 
         objectMapper.registerModule(module);
 

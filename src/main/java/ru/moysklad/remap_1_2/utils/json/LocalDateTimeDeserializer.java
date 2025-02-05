@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static ru.moysklad.remap_1_2.utils.Constants.DATE_FORMAT_PATTERN;
+import static ru.moysklad.remap_1_2.utils.Constants.DATETIME_FORMAT_PATTERN;
 
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
     private final DateTimeFormatter formatter;
 
     public LocalDateTimeDeserializer() {
-        formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN);
+        formatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT_PATTERN);
     }
 
     @Override

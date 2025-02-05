@@ -118,7 +118,12 @@ public class Attribute extends MetaEntity {
         /**
          * Ссылка
          */
-        @JsonProperty("link") linkValue
+        @JsonProperty("link") linkValue,
+
+        /**
+         * Справочник
+         */
+        dictionary
     }
 
     public <T> T getValueAs(Class<T> tClass) {

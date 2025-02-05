@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static ru.moysklad.remap_1_2.utils.Constants.DATE_FORMAT_PATTERN;
+import static ru.moysklad.remap_1_2.utils.Constants.DATETIME_FORMAT_PATTERN;
 
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     private final DateTimeFormatter formatter;
 
     public LocalDateTimeSerializer() {
-        formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN);
+        formatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT_PATTERN);
     }
 
     @Override

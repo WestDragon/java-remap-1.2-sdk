@@ -2,10 +2,10 @@ package ru.moysklad.remap_1_2.utils.json;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.moysklad.remap_1_2.entities.MetaEntity;
 import ru.moysklad.remap_1_2.entities.documents.CashIn;
 import ru.moysklad.remap_1_2.entities.documents.PaymentIn;
@@ -19,12 +19,13 @@ import java.io.IOException;
  * PaymentOut
  */
 public class FinanceInDocumentMarkerDeserializer extends JsonDeserializer<FinanceInDocumentMarker> {
-    private final ObjectMapper objectMapper = JsonUtils.createObjectMapperWithMetaAdapter();
 
     @Override
     public FinanceInDocumentMarker deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode node = p.getCodec().readTree(p);
-        MetaEntity me = objectMapper.treeToValue(node, MetaEntity.class);
+        ObjectCodec codec = p.getCodec();
+        JsonNode node = codec.readTree(p);
+
+        MetaEntity me = codec.treeToValue(node, MetaEntity.class);
 
         if (me.getMeta() == null) {
             throw new JsonParseException(p, "Can't parse field 'payments': meta is null");
@@ -34,10 +35,10 @@ public class FinanceInDocumentMarkerDeserializer extends JsonDeserializer<Financ
         }
         switch (me.getMeta().getType()) {
             case CASH_IN:
-                return objectMapper.treeToValue(node, CashIn.class);
+                return codec.treeToValue(node, CashIn.class);
 
             case PAYMENT_IN:
-                return objectMapper.treeToValue(node, PaymentIn.class);
+                return codec.treeToValue(node, PaymentIn.class);
 
             default:
                 throw new JsonParseException(p, "Can't parse field 'payments': meta.type must be one of [cashin, cashout, paymentin, paymentout]");

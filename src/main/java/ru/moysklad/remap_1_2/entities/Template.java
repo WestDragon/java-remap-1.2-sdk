@@ -2,15 +2,14 @@ package ru.moysklad.remap_1_2.entities;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.moysklad.remap_1_2.utils.json.JsonUtils;
 
 import java.io.IOException;
 
@@ -47,12 +46,12 @@ public class Template extends MetaEntity {
     private transient Boolean isEmbedded;
 
     public static class Deserializer extends JsonDeserializer<Template> {
-        private final ObjectMapper objectMapper = JsonUtils.createObjectMapperWithMetaAdapter();
-
         @Override
         public Template deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            JsonNode node = p.getCodec().readTree(p);
-            Template template = objectMapper.treeToValue(node, Template.class);
+            ObjectCodec codec = p.getCodec();
+            JsonNode node = codec.readTree(p);
+
+            Template template = codec.treeToValue(node, Template.class);
 
             if (template.getMeta() != null) {
                 if (template.getMeta().getType() == null) {
